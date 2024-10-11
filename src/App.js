@@ -29,7 +29,7 @@ App.get("/create", async (req, res) => {
 });
 App.get("/", async (req, res) => {
   try {
-    const [rows] = await pool.query(` select * from user`);
+    const [rows] = await pool.query(`select * from user`);
     return res.json(rows);
   } catch (error) {
     console.log(error);
