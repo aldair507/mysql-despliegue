@@ -74,3 +74,12 @@ export const logout = async (req, res) => {
   });
   return res.sendStatus(200);
 };
+
+export const getUsers = async (req, res) => {
+  try {
+    const [rows] = await pool.query(` select * from Usuario`);
+    return res.json(rows);
+  } catch (error) {
+    console.log(error);
+  }
+};
