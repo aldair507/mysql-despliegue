@@ -1,11 +1,16 @@
 import express from "express";
 import { pool } from "./db.js";
-import { PORT } from "./Config.js";
+import dotenv from "dotenv";
+
 const App = express();
+
+dotenv.config();
+const PORT=process.env.PORT
 
 App.listen(PORT, () => {
   console.log("server on port",PORT);
 });
+
 
 App.get("/ping", async (req, res) => {
   try {
