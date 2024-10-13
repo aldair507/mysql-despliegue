@@ -21,7 +21,6 @@ export const createTask = async (req, res) => {
     if (result.affectedRows === 1) {
       return res.status(201).json({
         message: "Nota creada exitosamente",
-        notaId: result.insertId, // Retorna el ID de la nueva nota creada
       });
     } else {
       return res.status(500).json({ message: "Error al crear la nota." });
@@ -45,6 +44,10 @@ export const getTask = async (req, res) => {
   }
 };
 
+/**
+ * Recupera una nota de la base de datos por su id. La nota solo se
+ * devuelve si el usuario autenticado es el due o de la nota.
+ */
 export const getTaskId = async (req, res) => {
   const idTask = req.params.id;
 
@@ -61,5 +64,55 @@ export const getTaskId = async (req, res) => {
     return res.json(rows);
   } catch (error) {
     res.status(500).json({ message: "error al recuperar notas" });
+  }
+};
+
+/**
+ * Elimina una nota de la base de datos. La nota se busca por su id y
+ * solo se elimina si el usuario autenticado es el due o de la nota.
+ */
+export const deleteTask = async (req, res) => {
+  const idTask = req.params.id;
+  const idUsuario = req.user.id;
+  try {
+    const [rows] = await pool.query(
+      `delete from Notas where id_Notas=? and id_Usuario=?`,
+      [idTask, idUsuario]
+    );
+
+    if (rows.affectedRows === 0) {
+      return res.status(404).json({ message: "Nota no encontrada" });
+    }
+
+    return res.status(200).json({ message: "Task deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "error al eliminar nota" });
+  }
+};
+
+//  * Actualiza una nota en la base de datos. La nota se busca por su id y
+//  * solo se actualiza si el usuario autenticado es el due o de la nota.
+
+export const updateTask = async (req, res) => {
+  const idTask = req.params.id;
+  const { Titulo_nota, Descripcion_nota } = req.body;
+  const idUsuario = req.user.id;
+  try {
+    const [rows] = await pool.query(
+      `update Notas set Titulo_nota=?, Descripcion_nota=? where id_Notas=? and id_Usuario=?`,
+      [Titulo_nota, Descripcion_nota, idTask, idUsuario]
+    );
+    if (rows.affectedRows === 0) {
+      return res.status(404).json({ message: "Nota no encontrada" });
+    }
+    const [response] = await pool.query(
+      `select * from Notas where id_Notas=? and id_Usuario=?`,
+      [idTask, idUsuario]
+    );
+    return res
+      .status(200)
+      .json({ message: "Task updated successfully", response });
+  } catch (error) {
+    res.status(500).json({ message: "error al actualizar la nota" });
   }
 };
