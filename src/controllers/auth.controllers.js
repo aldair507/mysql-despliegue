@@ -1,22 +1,18 @@
 import { pool } from "../db.js";
 import bcrypt from "bcrypt";
 import { createToken } from "../libs/jwt.js";
+import jwt from "jsonwebtoken";
+import { TOKEN_SECRET } from "../config/config.js";
 
 export const register = async (req, res) => {
   try {
     const { nombre_usuario, email_usuario, password } = req.body;
     const passswordHash = await bcrypt.hash(password, 10);
 
-    const existingCorreo = async (req, res) => {
-      try {
-        const [rows] = await pool.query(
-          `select * from Usuario where  email_usuario= ?`,
-          [email_usuario]
-        );
-      } catch (error) {
-        console.log(error);
-      }
-    };
+    const [existingCorreo] = await pool.query(
+      `select * from Usuario where email_usuario= ?`,
+      [email_usuario]
+    );
 
     if (existingCorreo.length > 0) {
       return res.status(400).json({ message: "El correo ya existe" });
@@ -56,6 +52,7 @@ export const login = async (req, res) => {
 
     const token = await createToken({
       id: Usuario.id_Usuario,
+      nombre: Usuario.nombre_usuario,
     });
     res.cookie("token", token);
     console.log(token);
@@ -83,3 +80,51 @@ export const getUsers = async (req, res) => {
     console.log(error);
   }
 };
+
+export const updateUser = async (req, res) => {
+  const { id } = req.params;
+
+  const { email_usuario, nombre_usuario } = req.body;
+  try {
+    await pool.query(
+      `update Usuario set nombre_usuario=?,email_usuario=? where id_Usuario=?`,
+      [nombre_usuario, email_usuario, id]
+    );
+    if (!id) {
+      return res.status(400).json({ message: "ID de usuario es requerido" });
+    }
+    const [rows] = await pool.query(
+      `SELECT * FROM Usuario WHERE id_Usuario = ?`,
+      [id]
+    );
+    return res.status(200).json(rows[0]);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "error al actualizar" });
+  }
+};
+export const verify = async (req, res) => {
+  console.log(req.user);
+  const { token } = req.cookies;
+  if (!token) return res.status(401).json({ message: "unathorixaded" });
+  jwt.verify(token, TOKEN_SECRET, async (err, user) => {
+    if (err) {
+      if (user.name === "TokenExpiredError") {
+        return res.status(401).json({ message: "Token Expired" });
+      } else {
+        return res.status(401).json({ message: "inautorized" });
+      }
+    }
+    const [rows] = await pool.query(
+      `select * from Usuario where id_Usuario=?`,
+      [user.id]
+    );
+    return res.status(200).json(rows);
+  });
+};
+
+// verifico el toke de req.cookie
+// si no existe el token inautrizado
+// si existe el token pero es expirado verico el nombre y retorno TokenExpiredError
+
+// busco el usurio

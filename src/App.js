@@ -1,10 +1,12 @@
 import express from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
-import registerRoutes from './routes/auth.routes.js'
-import loginRoutes from './routes/auth.routes.js'
-import logoutRoutes from './routes/auth.routes.js'
-import userRoutes from './routes/user.routes.js'
+import authRoutes from "./routes/auth.routes.js";
+
+import userRoutes from "./routes/user.routes.js";
+
+import cookieParser from "cookie-parser";
+import taskRouter from "./routes/task.routes.js";
 const App = express();
 
 dotenv.config();
@@ -14,10 +16,12 @@ App.listen(PORT, () => {
   console.log("server on port", PORT);
 });
 
+App.use(cookieParser());
 App.use(morgan("dev"));
 App.use(express.json());
 
-App.use('/',registerRoutes)
-App.use('/',loginRoutes)
-App.use('/',logoutRoutes)
-App.use('/',userRoutes)
+App.use("/auth", authRoutes);
+App.use("/user", userRoutes);
+App.use("/task", taskRouter);
+
+
