@@ -21,6 +21,11 @@ export const register = async (req, res) => {
       `insert into Usuario (nombre_usuario,email_usuario,password) values (?,?,?)`,
       [nombre_usuario, email_usuario, passswordHash]
     );
+    const token = await createToken({
+      id: Usuario.id_Usuario,
+      nombre: Usuario.nombre_usuario,
+    });
+    res.cookie("token", token);
     let response = {
       id: rows.insertId,
       nombre_usuario: nombre_usuario,
