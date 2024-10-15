@@ -21,6 +21,7 @@ export const register = async (req, res) => {
       `insert into Usuario (nombre_usuario,email_usuario,password) values (?,?,?)`,
       [nombre_usuario, email_usuario, passswordHash]
     );
+    const Usuario = rows[0];
     const token = await createToken({
       id: Usuario.id_Usuario,
       nombre: Usuario.nombre_usuario,
