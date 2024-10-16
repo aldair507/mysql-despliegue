@@ -28,13 +28,9 @@ export const register = async (req, res) => {
       nombre: nombre_usuario,
     });
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Lax",
-    });
+    res.cookie("token", token);
 
-    return res.status(201).json({
+    return res.status(200).json({
       id: rows.insertId,
       nombre_usuario,
       email_usuario,
@@ -67,11 +63,7 @@ export const login = async (req, res) => {
       id: Usuario.id_Usuario,
       nombre: Usuario.nombre_usuario,
     });
-    res.cookie("token", token, {
-      httpOnly: true, // Solo accesible desde el backend, no desde JavaScript del frontend
-      secure: true, // Solo se envía a través de HTTPS
-      sameSite: "Lax", // O 'Strict' o 'None' dependiendo de tu situación
-    });
+    res.cookie("token", token);
 
     return res
       .status(200)
