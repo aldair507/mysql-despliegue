@@ -27,9 +27,9 @@ export const register = async (req, res) => {
     });
     console.log(token);
     res.cookie("token", token, {
-      httpOnly: true,  // Solo accesible desde el backend, no desde JavaScript del frontend
-      secure: true,    // Solo se envía a través de HTTPS
-      sameSite: "Lax"  // O 'Strict' o 'None' dependiendo de tu situación
+      httpOnly: true, // Solo accesible desde el backend, no desde JavaScript del frontend
+      secure: true, // Solo se envía a través de HTTPS
+      sameSite: "Lax", // O 'Strict' o 'None' dependiendo de tu situación
     });
     let response = {
       id: rows.insertId,
@@ -65,14 +65,14 @@ export const login = async (req, res) => {
       nombre: Usuario.nombre_usuario,
     });
     res.cookie("token", token, {
-      httpOnly: true,  // Solo accesible desde el backend, no desde JavaScript del frontend
-      secure: true,    // Solo se envía a través de HTTPS
-      sameSite: "Lax"  // O 'Strict' o 'None' dependiendo de tu situación
+      httpOnly: true, // Solo accesible desde el backend, no desde JavaScript del frontend
+      secure: true, // Solo se envía a través de HTTPS
+      sameSite: "Lax", // O 'Strict' o 'None' dependiendo de tu situación
     });
 
     return res
       .status(200)
-      .json({ message: "Inicio de sesion exitoso", Usuario,token });
+      .json({ message: "Inicio de sesion exitoso", Usuario, token });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "error en el server" });
