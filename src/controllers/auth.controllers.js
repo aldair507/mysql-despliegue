@@ -63,7 +63,12 @@ export const login = async (req, res) => {
       id: Usuario.id_Usuario,
       nombre: Usuario.nombre_usuario,
     });
-    res.cookie("token", token);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
+    });
+
 
     return res
       .status(200)
