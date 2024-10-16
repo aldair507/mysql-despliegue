@@ -72,7 +72,7 @@ export const login = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Inicio de sesion exitoso", Usuario });
+      .json({ message: "Inicio de sesion exitoso", Usuario,token });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "error en el server" });
