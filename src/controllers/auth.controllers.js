@@ -63,11 +63,7 @@ export const login = async (req, res) => {
       id: Usuario.id_Usuario,
       nombre: Usuario.nombre_usuario,
     });
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Lax",
-    });
+    res.cookie("token", token);
 
 
     return res
@@ -118,8 +114,10 @@ export const updateUser = async (req, res) => {
   }
 };
 export const verify = async (req, res) => {
+  const  token = req.headers.authorization;
+ 
   try {
-    const { token } = req.cookies; // Extract the token from cookies
+  
 
     if (!token) {
       return res.status(401).json({ message: "Unauthorized" });
