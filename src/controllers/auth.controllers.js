@@ -41,7 +41,6 @@ export const register = async (req, res) => {
   }
 };
 
-
 export const login = async (req, res) => {
   try {
     const { email_usuario, password } = req.body;
@@ -64,7 +63,6 @@ export const login = async (req, res) => {
       nombre: Usuario.nombre_usuario,
     });
     res.cookie("token", token);
-
 
     return res
       .status(200)
@@ -114,11 +112,9 @@ export const updateUser = async (req, res) => {
   }
 };
 export const verify = async (req, res) => {
-  const  token = req.headers.authorization;
- 
-  try {
-  
+  const token = req.headers.authorization;
 
+  try {
     if (!token) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -145,7 +141,6 @@ export const verify = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
-
 
 // verifico el toke de req.cookie
 // si no existe el token inautrizado
